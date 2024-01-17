@@ -1,6 +1,10 @@
 class GameMap {
-    constructor(starSystems) {
-        this.starSystems = starSystems;
+    constructor() {
+        this.starSystems = [];
+    }
+
+    setStarSystems(starSystems) {
+        this.starSystems = starSystems
     }
 
     findPath(fromSystem, toSystem) {

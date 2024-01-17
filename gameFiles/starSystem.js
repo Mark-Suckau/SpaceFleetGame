@@ -1,7 +1,11 @@
+// uses CircularButton from button.js
+// uses displayStarSystem.RADIUS from constants.js
+
 class StarSystem {
-  constructor(xPos, yPos, name, creditsProduced) {
-    this.posX = xPos;
-    this.posY = yPos;
+  constructor(posX, posY, name, creditsProduced, gameGUI) {
+    this.posX = posX;
+    this.posY = posY;
+    this.radius = displayStarSystem.RADIUS;
     
     this.name = name;
     this.creditsProduced = creditsProduced; // credits produced every 10 update cycles (for now 1 frame = 1 update cycle)
@@ -12,6 +16,10 @@ class StarSystem {
 
     // keeping track of battle in system
     this.hasBattle = false;
+
+    // display
+    this.guiSelected = false; // keeps track of if this system is currently selected by gui (used for highlighting, etc.)
+    this.displayButton = new CircularButton(posX, posY, this.radius, () => {gameGUI.selectSystem(this)});
   }
 
   connectTo(system) {
@@ -34,5 +42,13 @@ class StarSystem {
     if(index > -1) {
       this.fleets.splice(index, 1);
     }
+  }
+
+  guiSelect() {
+    this.guiSelected = true;
+  }
+
+  guiDeselect() {
+    this.guiSelected = false;
   }
 }

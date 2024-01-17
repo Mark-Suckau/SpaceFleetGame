@@ -1,8 +1,9 @@
 /* potential Bug: if moving along a path and after calculation of path, it is made impassible, 
 then it will still move along it since it only does the calculation for valid path once, fix using a validDestination() check in update when travelling*/
+// uses Button.js
 
 class Fleet {
-    constructor(name, ships, dps, currentSystem, fleetType, gameGUI) {
+    constructor(name, ships, dps, currentSystem, fleetType, gameGUI, gameMap) {
         // general stats
         this.name = name;
         this.ships = ships; // amount of ships in fleet
@@ -10,6 +11,8 @@ class Fleet {
         this.fleetType = fleetType // fleetType according to constants.js
       
         // keeping track of movement
+        this.gameMap = gameMap;
+
         this.isMoving = false; // MAIN STATE
         this.systemReached = false;
         this.currentSystem = currentSystem; // Obj reference to current star system
@@ -24,6 +27,7 @@ class Fleet {
         this.displayPosX = 0;
         this.displayPosY = 0;
         this.displayButton = new Button(this.displayPosX, this.displayPosY, 150, 12, ()=>{gameGUI.selectFleet(this)});
+        this.guiSelected = false; // displays different color for text when selected vs not
     }
   
     setDisplayPos(displayPosX, displayPosY) {
@@ -58,13 +62,13 @@ class Fleet {
         }
     }
 
-    beginTravel(toSystem, map) {
+    beginTravel(toSystem) {
         // check if currently occupied doing something else
         if(this.isBattling) {
             console.log("Fleet " + this.name + " cannot move, currently battling");
         } else {
             // Implement pathfinding logic
-            this.movementPath = map.findPath(this.currentSystem, toSystem); // return array in format of this.movementPath (0: first, length:last)
+            this.movementPath = this.gameMap.findPath(this.currentSystem, toSystem); // return array in format of this.movementPath (0: first, length:last)
         }
     }
   
@@ -74,5 +78,13 @@ class Fleet {
         } else {
             this.isBattling = true;
         }
+    }
+
+    guiSelect() {
+        this.guiSelected = true;
+    }
+
+    guiDeselect() {
+        this.guiSelected = false;
     }
   }
