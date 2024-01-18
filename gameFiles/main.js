@@ -9,6 +9,11 @@ function setup() {
     map = new GameMap();
     let starSystems = instantiateGame(gui, map);
     map.setStarSystems(starSystems);
+    test(map, starSystems);
+}
+
+function test(map, starSystems) {
+    console.log(map.findPath(starSystems[0], starSystems[3]).map(e => e.name));
 }
 
 function instantiateGame(gui, map) {
@@ -46,17 +51,18 @@ function instantiateGame(gui, map) {
     starSystems[1].addFleet(fleets[3]);
     
     // adding buttons from fleets to gui
-    for (let fleet of fleets) {
+    for (const fleet of fleets) {
         gui.addButton(fleet.displayButton);
     }
 
     // adding buttons from star systems to gui
-    for(let system of starSystems) {
+    for(const system of starSystems) {
         gui.addButton(system.displayButton);
     }
 
     return starSystems;
 }
+
 
 function draw() {
     background(255);
@@ -80,9 +86,10 @@ function draw() {
         // display lines connecting systems
         // note: currently drawing line twice for each pair of connected systems
         for(connectedSystem of system.connectedSystems) {
+            const connectedSystemNode = connectedSystem.node;
             strokeWeight(2);
             stroke(200);
-            line(system.posX, system.posY, connectedSystem.posX, connectedSystem.posY);
+            line(system.posX, system.posY, connectedSystemNode.posX, connectedSystemNode.posY);
         }
         // display fleets as text and button connected to that fleet in star system
         for (let i = 0; i < system.fleets.length; i++) {

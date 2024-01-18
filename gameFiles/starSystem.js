@@ -9,7 +9,7 @@ class StarSystem {
     
     this.name = name;
     this.creditsProduced = creditsProduced; // credits produced every 10 update cycles (for now 1 frame = 1 update cycle)
-    this.connectedSystems = [];
+    this.connectedSystems = []; // contains objs in format {node: systemObj, cost: weight to be used in A* pathfinding}
 
     // keeping track of fleets in system
     this.fleets = [];
@@ -22,9 +22,9 @@ class StarSystem {
     this.displayButton = new CircularButton(posX, posY, this.radius, () => {gameGUI.selectSystem(this)});
   }
 
-  connectTo(system) {
-    this.connectedSystems.push(system);
-    system.connectedSystems.push(this);
+  connectTo(system, cost=1) {
+    this.connectedSystems.push({node: system, cost: cost});
+    system.connectedSystems.push({node: this, cost: cost});
   }
 
   addFleet(fleet) {
