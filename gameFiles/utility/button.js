@@ -1,5 +1,5 @@
 class Button {
-    constructor(posX, posY, w, h, callback, text='') {
+    constructor(posX, posY, w, h, callback, isClickable=true, text='') {
         this.posX = posX;
         this.posY = posY;
         this.w = w;
@@ -8,7 +8,7 @@ class Button {
         this.text = text;
 
         this.isMouseOver = false;
-        this.isClickable = true; // used for hiding buttons from menus when the menu is closed, etc.
+        this.isClickable = isClickable; // used for hiding buttons from menus when the menu is closed, etc.
     }
 
     checkClick() {

@@ -1,11 +1,20 @@
 class GameMap {
     constructor() {
-        this.starSystems = [];
         // calling starSystems nodes for sake of clarity in pathfinding context
+        this.starSystems = [];
+        this.fleets = []; // keeps track of all fleets in game (for updating them)
     }
 
     setStarSystems(starSystems) {
         this.starSystems = starSystems
+    }
+
+    setFleets(fleets) {
+        this.fleets = fleets;
+    }
+
+    removeFleet(fleet) {
+        this.fleets.splice(this.fleets.indexOf(fleet), 1);
     }
 
     // PATHFINDING With A*
@@ -25,7 +34,9 @@ class GameMap {
             const currentNode = this.getLowestFScoreNode(openSet, fScore);
             
             if(currentNode === destinationSystem) {
-                return this.reconstructPath(gScore, currentNode);
+                let path = this.reconstructPath(gScore, currentNode);
+                path.shift();
+                return path;
             }
             
             // remove current node from openSet and move to closed set since it has been checked

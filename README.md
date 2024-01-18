@@ -1,6 +1,5 @@
 # SpaceFleetGame
 ## TODO
-- Add functionality for fleets to move between star systems
-    - requires some function to find the path between star systems
-- Add functionality for fleets to battle with enemy fleets when in same star system
-    - after battle conclusion, all loser fleets are destroyed until I have more time to refine how many ships lost, etc.
+- Bugs:
+    - sometimes when entering what should be a battle, a battle isnt initiated (when travelling past system with enemies, but should be caught by that system)
+    - not all enemies destroyed after winning a battle when multiple enemies present

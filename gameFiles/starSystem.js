@@ -14,9 +14,6 @@ class StarSystem {
     // keeping track of fleets in system
     this.fleets = [];
 
-    // keeping track of battle in system
-    this.hasBattle = false;
-
     // display
     this.guiSelected = false; // keeps track of if this system is currently selected by gui (used for highlighting, etc.)
     this.displayButton = new CircularButton(posX, posY, this.radius, () => {gameGUI.selectSystem(this)});
@@ -31,17 +28,17 @@ class StarSystem {
     this.fleets.push(fleet);
   }
 
-  removeFleet(rmvFleet) {
-    let index = -1;
-    for(let i = 0; i < this.fleets.length; i++) {
-      if(this.fleets[i] == rmvFleet) {
-        index = i;
-        break;
+  removeFleet(fleet) {
+    this.fleets.splice(this.fleets.indexOf(fleet), 1);
+  }
+
+  hasFleetType(_fleetType) {
+    for(const fleet of this.fleets) {
+      if(fleet.fleetType == _fleetType) {
+        return true;
       }
     }
-    if(index > -1) {
-      this.fleets.splice(index, 1);
-    }
+    return false;
   }
 
   guiSelect() {

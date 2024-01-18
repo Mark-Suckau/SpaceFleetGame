@@ -1,5 +1,8 @@
 class GUI {
-    constructor(canvasWidth, canvasHeight, buttons = []) {
+    constructor(canvasWidth, canvasHeight, battleManager, buttons = []) {
+        // other helper classes
+        this.battleManager = battleManager;
+
         this.buttons = buttons;
         
         this.canWidth = canvasWidth;
@@ -17,8 +20,20 @@ class GUI {
         this.starSystemMenuWidth = 300;
         this.starSystemMenuHeight = 200;
         this.starSystemMenuButtons = [
-            new Button(this.starSystemMenuAnchorX+10, this.starSystemMenuAnchorY+10, 100, 30, ()=>{if(this.selectedFleet && this.selectedSystem) 
-                {this.selectedFleet.beginTravel(this.selectSystem)} else {alert("Please Select a Fleet and a destination Star System")}}, 'Travel to System')
+            new Button(this.starSystemMenuAnchorX+10, this.starSystemMenuAnchorY+10, 100, 30, ()=>
+            {
+                if(this.selectedFleet && this.selectedSystem) 
+                {
+                    if(this.selectedFleet.playerControllable) {
+                        this.selectedFleet.beginTravel(this.selectedSystem)
+                    } else {
+                        alert("This fleet is not controllable by the player");
+                    }
+                } else 
+                {
+                    alert("Please select a fleet and a destination Star System");
+                }
+            }, true, 'Travel to System')
             ]
 
         for(let button of this.starSystemMenuButtons) {
@@ -131,8 +146,25 @@ class GUI {
         strokeWeight(4);
         stroke(0);
         rect(this.starSystemMenuAnchorX, this.starSystemMenuAnchorY, this.starSystemMenuWidth, this.starSystemMenuHeight);
-        textAlign(RIGHT, TOP);
-        text(this.selectedSystem.name, this.starSystemMenuAnchorX + this.starSystemMenuWidth-10, this.starSystemMenuAnchorY+10);
+        
+        let increment = 10;
+        textAlign(LEFT, TOP);
+        text(this.selectedSystem.name, this.starSystemMenuAnchorX + this.starSystemMenuWidth/2, this.starSystemMenuAnchorY+increment);
+        
+        // display battle progress if battle is taking place
+        if(this.battleManager.isBattling(this.selectedSystem)) {
+            increment += 20;
+            noFill();
+            stroke(0);
+            strokeWeight(3);
+            rect(this.starSystemMenuAnchorX -10 + this.starSystemMenuWidth/2, this.starSystemMenuAnchorY + increment, this.starSystemMenuWidth/2, 16);
+            noStroke();
+            const battleWinningPercent = this.battleManager.getBattle(this.selectedSystem).winningPercent;
+            if(battleWinningPercent > 0) fill (20, 170, 20);
+            if(battleWinningPercent < 0) fill(170, 20, 20);
+            rect(this.starSystemMenuAnchorX -10 + this.starSystemMenuWidth/2 + this.starSystemMenuWidth/4, this.starSystemMenuAnchorY + increment, 
+                (this.starSystemMenuWidth/4) * this.battleManager.getBattle(this.selectedSystem).winningPercent, 16);
+        }
 
         for(let button of this.starSystemMenuButtons) {
             if(button.isMouseOver) {
@@ -145,8 +177,8 @@ class GUI {
             rect(button.posX, button.posY, button.w, button.h);
             noStroke();
             fill(0);
-            textAlign(LEFT, TOP);
-            text(button.text, button.posX, button.posY);
+            textAlign(LEFT, CENTER);
+            text(button.text, button.posX, button.posY + button.h/2);
         }
     }
 
@@ -172,6 +204,15 @@ class GUI {
         textAlign(LEFT, TOP);
         rect(this.fleetMenuAnchorX, this.fleetMenuAnchorY, this.fleetMenuWidth, this.fleetMenuHeight);
         
+        let status = "Idling";
+        let progress = -1;
+        if (this.selectedFleet.isMoving) {
+            status = "Travelling";
+            progress = this.selectedFleet.movementProgress * 100;
+        } else if (this.selectedFleet.isBattling) {
+            status = "Battling";
+        }
+
         // displaying stats
         let increment = 10
         text(this.selectedFleet.name, this.fleetMenuAnchorX+10, this.fleetMenuAnchorY+increment);
@@ -183,6 +224,19 @@ class GUI {
         text("DPS: "+this.selectedFleet.dps, this.fleetMenuAnchorX+10, this.fleetMenuAnchorY+increment);
         increment += 20;
         text("Type: "+this.selectedFleet.fleetType, this.fleetMenuAnchorX+10, this.fleetMenuAnchorY+increment);
+        increment += 20;
+        text("Status: "+status, this.fleetMenuAnchorX+10, this.fleetMenuAnchorY+increment);
+        // display loading bar if moving
+        if(this.selectedFleet.isMoving) {
+            increment += 20;
+            noFill();
+            stroke(0);
+            strokeWeight(3);
+            rect(this.fleetMenuAnchorX + 10, this.fleetMenuAnchorY + increment, this.fleetMenuWidth-20, 16);
+            noStroke();
+            fill(100, 20, 20);
+            rect(this.fleetMenuAnchorX + 10, this.fleetMenuAnchorY + increment, (this.fleetMenuWidth-20) * this.selectedFleet.movementProgress, 16);
+        }
 
         // displaying buttons
         for(let button of this.fleetMenuButtons) {
